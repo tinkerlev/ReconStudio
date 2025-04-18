@@ -20,7 +20,7 @@ It helps automate the process of gathering intelligence on websites using subdom
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/ReconStudio.git
+git clone https://github.com/tinkerlev/ReconStudio.git
 cd ReconStudio
 ```
 
