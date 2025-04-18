@@ -1,0 +1,12 @@
+# requirements.txt
+
+# Web crawling & parsing
+requests
+beautifulsoup4
+
+# WHOIS lookup
+python-whois
+
+# Report generation
+fpdf
+jinja2
