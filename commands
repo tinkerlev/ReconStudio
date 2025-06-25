@@ -1,0 +1,266 @@
+DNS & Subdomain Recon
+dig ANY example.com +noall +answer
+# **Get all available DNS records for a domain.**
+
+dig NS example.com +short
+# **Show nameservers used by the domain.**
+
+dig MX example.com +short
+# **List mail servers (MX records).**
+
+dig TXT example.com +short
+# **Get SPF/DKIM/DMARC and other TXT records.**
+
+whois example.com
+# **Discover domain registration data and contact info.**
+
+sublist3r -d example.com -o subdomains.txt
+# **Passive subdomain enumeration using multiple sources.**
+
+amass enum -passive -d example.com -o amass.txt
+# **Advanced passive subdomain discovery and mapping.**
+
+Reverse IP & Certificate Transparency
+curl -s "https://viewdns.info/reverseip/?host=192.0.2.1&t=1"
+# **Find domains hosted on the same IP (shared hosting).**
+
+curl -s "https://crt.sh/?q=%.example.com&output=json" | jq '.[] | .name_value'
+# **Discover subdomains from SSL certificates.**
+
+Nmap Full Port Scans
+nmap -Pn -p- -sS -sV --version-intensity 9 -T4 -n -oA full_scan 192.0.2.1
+# **Stealth full-port TCP scan with service version detection.**
+
+cat ip_list.txt | xargs -P 3 -I{} nmap -Pn -p- -sS -sV --version-intensity 9 -T4 -n -oA "scan_{}" {}
+# **Run Nmap scans in parallel across multiple IPs.**
+
+nmap --script ssl-enum-ciphers -p 443 192.0.2.1
+# **Enumerate SSL/TLS ciphers and protocols.**
+
+nmap --script smb-enum-shares,smb-os-discovery -p445 192.0.2.1
+# **Enumerate SMB shares and detect Windows OS over port 445.**
+
+nmap -sV -p 82 --version-intensity 9 192.0.2.1
+# **Probe non-standard port 82 to detect service details.**
+
+nmap -sV -sS -Pn --script=banner 192.0.2.1
+# **Grab service banners from open ports.**
+
+Manual Service Probing
+curl -i -A "Mozilla/5.0" http://192.0.2.1:82
+# **Test port 82 manually with browser-like user agent.**
+
+curl -X OPTIONS -i https://example.com
+# **Check which HTTP methods are allowed (e.g., PUT/DELETE).**
+
+curl -i -H "Host: test.example.com" http://192.0.2.1
+# **Test virtual host routing or host header injection.**
+
+curl -i -H "Origin: https://evil.com" https://example.com
+# **Detect CORS misconfiguration (Access-Control-Allow-Origin).**
+
+curl -s -I https://example.com/.git/HEAD
+# **Check if the .git directory is exposed (dangerous misconfig).**
+
+sslscan --no-failed https://192.0.2.1
+# **Scan for supported SSL/TLS protocols and weaknesses.**
+
+JavaScript Leak Detection
+curl -s https://example.com | grep -Eo "src=['\\\"][^'\\\"]+\\.js" | cut -d\" -f2 | while read js; do
+  curl -s "https://example.com$js" | grep -Ei "api[_-]?key|token|secret|password"
+done
+# **Download JS files and search for hardcoded secrets or API keys.**
+
+curl -s https://example.com | grep -Eo 'https?://[^\"\\'\<\>\s]+' | sort -u
+# **Extract embedded URLs from page content or JS – detect internal APIs or hidden endpoints.**
+
+curl -s https://example.com/main.js | grep -Ei "Bearer|Basic|Authorization|apikey|secret|token"
+# **Manually inspect loaded JS files for sensitive auth headers or credentials.**
+
+curl -s https://example.com | grep -Eo "src=[\"'][^\"']+.js[\"']" | sed 's/src=//g' | tr -d "'\"" | while read js; do
+  url=$(echo "$js" | grep -q "^http" && echo "$js" || echo "https://example.com$js")
+  echo "[*] Checking: $url"
+  curl -s "$url" | grep -Ei "password|auth|jwt|oauth|access_token|client_id|client_secret"
+done
+# **Recursive JS fetch and deep grep for common credential patterns.**
+
+wget -r -l2 -A.js https://example.com
+# **Download all JS files recursively (depth 2) for offline inspection.**
+
+grep -rEi "api[_-]?key|secret|token|authorization|auth" ./example.com/
+# **Once JS is downloaded locally – search entire tree for leaks.**
+
+ENV or configuration variable exposure
+curl -s https://example.com/config.js
+curl -s https://example.com/env.js
+# **Check for exposed configuration files used by frontend frameworks.**
+
+grep -Ei "AIza[0-9A-Za-z_-]{35}"   # Google API Key
+grep -Ei "sk_live_[0-9a-zA-Z]{24}" # Stripe Live Key
+grep -Ei "ghp_[A-Za-z0-9]{36}"     # GitHub Personal Token
+grep -Ei "[a-zA-Z0-9]{32,}"        # Generic suspicious strings
+
+
+S3 Bucket Exposure Check
+curl https://example.s3.amazonaws.com/
+# **Test if the S3 bucket is publicly accessible (listable).**
+
+curl -s -o /dev/null -w "%{http_code}\n" https://example.s3.amazonaws.com/test.txt
+# **Check if a known or guessed file is downloadable (200 = success).**
+
+host example.s3.amazonaws.com
+# **Resolve S3 bucket subdomain (checks DNS-level presence).**
+
+nmap -p 80,443 example.s3.amazonaws.com
+# **Verify S3 endpoint is online and responds to HTTP/S.**
+
+curl -I https://s3.amazonaws.com/example
+# **Check old-style S3 bucket via path-based access (legacy format).**
+
+curl -I https://example.s3-us-west-1.amazonaws.com/
+# **Check regional S3 endpoint (may differ from default).**
+
+for region in us-east-1 us-west-1 eu-west-1 ap-south-1; do
+  curl -s -I https://example.s3.$region.amazonaws.com/ | grep "HTTP/"
+done
+# **Loop through common AWS regions to find exposed buckets.**
+
+Directory & File Discovery (Content Discovery)
+gobuster dir -u https://example.com -w /usr/share/wordlists/dirb/common.txt -t 50
+# Brute-force common directories and files on web server.
+
+ffuf -u https://example.com/FUZZ -w /usr/share/seclists/Discovery/Web-Content/raft-small-directories.txt -fc 403,404
+# Fast content discovery with wordlists, filtering common error codes.
+
+ffuf -u https://example.com/page.php?FUZZ=test -w wordlist.txt -fs 0
+# Fuzz for parameter names on known endpoints.
+
+whatweb https://example.com
+# Identify technologies used by the website (server, framework, CMS).
+
+curl -sI https://example.com | grep -Ei "Server:|X-Powered-By:|Via:"
+# Check HTTP response headers for backend tech disclosure.
+
+curl -sI https://example.com | grep -Ei "X-Frame-Options|Strict-Transport-Security|Content-Security-Policy|X-XSS-Protection|Referrer-Policy"
+# Evaluate security headers that prevent XSS, clickjacking, etc.
+
+wafw00f https://example.com
+# Identify web application firewall in front of target.
+
+curl -sI https://example.com | grep "Content-Security-Policy"
+# Check for weak or missing CSP allowing inline scripts or unsafe eval.
+
+curl -i "https://example.com/redirect?url=https://evil.com"
+# Test for open redirect vulnerabilities.
+
+curl -i "https://example.com/page?lang=en&lang=fr"
+# Test for HPP by injecting duplicate parameters.
+
+curl -sI https://example.com/.git/config
+curl -sI https://example.com/backup.zip
+curl -sI https://example.com/index.php.bak
+# Check for common backup or misnamed files.
+
+gobuster dir -u https://example.com -w /usr/share/seclists/Discovery/Web-Content/common.txt -x php,asp,html -t 50 -o gobuster_admin.txt
+# Hunt for admin interfaces, login panels, and hidden routes.
+
+curl -s https://example.com | grep -iE "admin|login|dashboard|signin"
+# Scan homepage content for links or paths to authentication points.
+
+gau example.com | grep "=" | qsreplace "test" | tee params.txt
+# Discover URLs with parameters using gau (getallurls) + quick payload injection.
+
+curl -sI https://s3.amazonaws.com/example
+# Check path-based S3 buckets.
+
+curl -sI https://example.s3.amazonaws.com/
+# Check virtual-host style buckets.
+
+for region in us-east-1 eu-west-1 ap-south-1; do
+  curl -sI https://example.s3.$region.amazonaws.com/ | grep "HTTP/"
+done
+# Loop through AWS regions to discover bucket exposure.
+
+curl -sI https://example.com/.env
+curl -sI https://example.com/config.js
+curl -sI https://example.com/package.json
+curl -sI https://example.com/.git/config
+# Look for developer configuration leaks in public paths.
+
+waybackurls example.com | tee wayback.txt
+# Fetch archived URLs from Internet Archive (great for deleted content).
+
+cat wayback.txt | grep -E '\.php|\.js|\.bak|\.zip' | sort -u
+# Focus on sensitive extensions and forgotten resources.
+
+curl -X GET "https://example.com/admin%2f../login"
+# Basic path traversal bypass.
+
+curl -X GET "https://example.com/%2e%2e/.git/config"
+# Unicode/double-encoding for traversal.
+
+curl -H "X-Original-URL: /admin" https://example.com
+# Bypass using alternate headers.
+
+dig CNAME sub.example.com +short
+# If CNAME points to a decommissioned 3rd-party platform (e.g., GitHub Pages, Heroku), test for takeover.
+
+curl -sI https://sub.example.com | grep -i "No such app|Repository not found|Domain not configured"
+# Check for takeover fingerprint.
+
+curl -s https://example.com/.git/HEAD
+# Check if .git folder is exposed (should return `ref: refs/heads/main`)
+
+wget -r -np -R "index.html*" https://example.com/.git/
+# Try to recursively download the entire .git directory if it's open
+
+curl -s https://example.com/.env
+# Common in Laravel / Node apps. May reveal DB creds, JWT secrets, API keys.
+
+curl -s https://example.com/.env | grep -Ei "DB_|SECRET|KEY|TOKEN"
+# Targeted grab for juicy vars
+
+curl -s https://example.com/.gitignore
+# Often reveals the file structure and sensitive paths excluded from Git
+
+curl -s https://example.com/.npmrc
+# May include private npm registry tokens (dangerous!)
+
+curl -s https://example.com/config.json
+curl -s https://example.com/config.js
+curl -s https://example.com/firebase.json
+curl -s https://example.com/webpack.config.js
+# Look for API keys, client secrets, feature flags, internal endpoints
+
+curl -s https://example.com/backups/
+# If directory listing is enabled — you’ll see a file index
+
+curl -s https://example.com/logs/
+# Look for logs with auth/session/debug info
+
+curl -sI https://example.com/index.php.bak
+curl -sI https://example.com/website.zip
+curl -sI https://example.com/backup.tar.gz
+# Look for backup versions or full source zips
+
+curl -s https://example.com/.DS_Store
+# macOS file may reveal directory structure when decoded (can use ds_store_expander)
+
+curl -s https://example.com/.svn/entries
+# SVN leftovers — may leak full repo path, usernames, file names
+
+curl -s https://example.com/static/app.js | grep -Ei "api[_-]?key|client_secret|firebase|auth|Bearer"
+# Scan JS for embedded secrets
+
+curl -s https://example.com/app.js | grep -Ei "window\\.__[a-zA-Z0-9_]+\\s*=\\s*{"
+# Look for frontend-exposed state or config objects
+
+curl -s https://example.com | grep -Ei "sessionid|jwt|access_token|debug=true"
+# HTML leaks from dev/debug mode
+
+gau example.com | grep -Ei "token=|debug=|auth="
+# Pull archived URLs that may contain secrets in query params
+
+curl -s https://api.example.com/users
+curl -s https://api.example.com/admin/config
+# Hit API endpoints directly — look for 200s where 401/403 are expected
