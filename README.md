@@ -1,8 +1,16 @@
 # 🚀 ReconStudio - Modular Website Intelligence Toolkit
 
-![License](https://img.shields.io/github/license/tinkerlev/ReconStudio)
-![Python Version](https://img.shields.io/badge/python-3.6%2B-blue)
-![Last Commit](https://img.shields.io/github/last-commit/tinkerlev/ReconStudio)
+<p align="center">
+  <img src="https://img.shields.io/badge/Bash-Toolkit-black?style=flat-square&logo=gnubash"/>
+  <img src="https://img.shields.io/badge/Nmap-FullScan-blue?style=flat-square"/>
+  <img src="https://img.shields.io/badge/OSINT-Passive-green?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Red%20Team-Offensive-important?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Recon-Phase1-critical?style=flat-square&logo=airplayaudio"/>
+  <img src="https://img.shields.io/badge/Service-Version%20Detection-blue?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Curl-Manual%20Testing-black?style=flat-square&logo=curl"/>
+  <img src="https://img.shields.io/badge/No-Frameworks-success?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Ethical-Use%20Only-green?style=flat-square"/>
+</p>
 
 **ReconStudio** is a modular, extensible reconnaissance tool built for **cybersecurity researchers, penetration testers, and ethical hackers**. It automates the process of collecting intelligence on public-facing web domains, with support for subdomains, WHOIS, passive data harvesting, and report generation in multiple formats.
 
