@@ -267,3 +267,4 @@ curl -s https://api.example.com/admin/config
 
 
 hydra -l admin -P /usr/share/wordlists/rockyou.txt ftp://ip.example
+sudo tcpdump -i any port 21 or port 110 or port 143 -A
