@@ -47,6 +47,9 @@ nmap -sV -sS -Pn --script=banner 192.0.2.1
 # **Grab service banners from open ports.**
 
 nmap -p <port> -sV --script "default,discovery,vuln" 172.X.X.X
+nmap -Pn -p <port> -sV --script http-headers 172.x.x.x
+nmap -sS -sV -Pn -p- -T5 <IP>
+nmap -p 80,443 -sV -sC -T4 <URL/IP>
 
 Manual Service Probing
 curl -i -A "Mozilla/5.0" http://192.0.2.1:82
