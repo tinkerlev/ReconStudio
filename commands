@@ -46,6 +46,8 @@ nmap -sV -p 82 --version-intensity 9 192.0.2.1
 nmap -sV -sS -Pn --script=banner 192.0.2.1
 # **Grab service banners from open ports.**
 
+nmap -p <port> -sV --script "default,discovery,vuln" 172.X.X.X
+
 Manual Service Probing
 curl -i -A "Mozilla/5.0" http://192.0.2.1:82
 # **Test port 82 manually with browser-like user agent.**
