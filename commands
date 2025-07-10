@@ -22,10 +22,8 @@ amass enum -passive -d example.com -o amass.txt
 
 Reverse IP & Certificate Transparency
 curl -s "https://viewdns.info/reverseip/?host=192.0.2.1&t=1"
-# **Find domains hosted on the same IP (shared hosting).**
-
 curl -s "https://crt.sh/?q=%.example.com&output=json" | jq '.[] | .name_value'
-# **Discover subdomains from SSL certificates.**
+curl -sL https://example.com | grep -Eoi "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}"
 
 Nmap Full Port Scans
 nmap -Pn -p- -sS -sV --version-intensity 9 -T4 -n -oA full_scan 192.0.2.1
@@ -90,7 +88,7 @@ done
 # **Recursive JS fetch and deep grep for common credential patterns.**
 
 wget -r -l2 -A.js https://example.com
-# **Download all JS files recursively (depth 2) for offline inspection.**
+wget -r -l 2 -nd -nv -e robots=off -A html,htm,php https://example.com | grep -Eoi "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}" *
 
 grep -rEi "api[_-]?key|secret|token|authorization|auth" ./example.com/
 # **Once JS is downloaded locally – search entire tree for leaks.**
