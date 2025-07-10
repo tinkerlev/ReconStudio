@@ -299,3 +299,4 @@ https://censys.io/
 https://www.shodan.io/
 
 openssl s_client -connect mail.example.com.:443 | openssl x509 -text
+openssl s_client -starttls smtp -crlf -ign_eof -connect mail.examole.com.ar:587
