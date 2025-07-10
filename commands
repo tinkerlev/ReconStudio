@@ -298,3 +298,4 @@ https://crt.sh/
 https://censys.io/
 https://www.shodan.io/
 
+openssl s_client -connect mail.example.com.:443 | openssl x509 -text
