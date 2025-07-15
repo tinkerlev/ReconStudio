@@ -9,13 +9,10 @@ dig MX example.com +short
 # **List mail servers (MX records).**
 
 dig TXT example.com +short
-# **Get SPF/DKIM/DMARC and other TXT records.**
 
 whois example.com
-# **Discover domain registration data and contact info.**
 
 sublist3r -d example.com -o subdomains.txt
-# **Passive subdomain enumeration using multiple sources.**
 
 amass enum -passive -d example.com -o amass.txt
 # **Advanced passive subdomain discovery and mapping.**
