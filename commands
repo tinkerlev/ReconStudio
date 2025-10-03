@@ -23,22 +23,22 @@ curl -s "https://crt.sh/?q=%.example.com&output=json" | jq '.[] | .name_value'
 curl -sL https://example.com | grep -Eoi "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}"
 
 Nmap Full Port Scans
-nmap -Pn -p- -sS -sV --version-intensity 9 -T4 -n -oA full_scan 192.0.2.1
+nmap -Pn -p- -sS -sV --version-intensity 9 -T4 -n -oA full_scan <IP address>
 # **Stealth full-port TCP scan with service version detection.**
 
 cat ip_list.txt | xargs -P 3 -I{} nmap -Pn -p- -sS -sV --version-intensity 9 -T4 -n -oA "scan_{}" {}
 # **Run Nmap scans in parallel across multiple IPs.**
 
-nmap --script ssl-enum-ciphers -p 443 192.0.2.1
+nmap --script ssl-enum-ciphers -p 443 <IP address>
 # **Enumerate SSL/TLS ciphers and protocols.**
 
-nmap --script smb-enum-shares,smb-os-discovery -p445 192.0.2.1
+nmap --script smb-enum-shares,smb-os-discovery -p445 <IP address>
 # **Enumerate SMB shares and detect Windows OS over port 445.**
 
-nmap -sV -p 82 --version-intensity 9 192.0.2.1
+nmap -sV -p 82 --version-intensity 9 <IP address>
 # **Probe non-standard port 82 to detect service details.**
 
-nmap -sV -sS -Pn --script=banner 192.0.2.1
+nmap -sV -sS -Pn --script=banner <IP address>
 # **Grab service banners from open ports.**
 
 nmap -p <port> -sV --script "default,discovery,vuln" 172.X.X.X
