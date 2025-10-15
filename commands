@@ -29,6 +29,8 @@ nmap -Pn -p- -sS -sV --version-intensity 9 -T4 -n -oA full_scan <IP address>
 cat ip_list.txt | xargs -P 3 -I{} nmap -Pn -p- -sS -sV --version-intensity 9 -T4 -n -oA "scan_{}" {}
 # **Run Nmap scans in parallel across multiple IPs.**
 
+nmap -p- -open -sS --min-rate 5000 -n -Pn -vvv <IP>
+
 nmap --script ssl-enum-ciphers -p 443 <IP address>
 # **Enumerate SSL/TLS ciphers and protocols.**
 
