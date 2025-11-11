@@ -25,7 +25,7 @@ curl -sL https://example.com | grep -Eoi "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z
 Nmap Full Port Scans
 nmap -Pn -p- -sS -sV --version-intensity 9 -T4 -n -oA full_scan <IP address>
 # **Stealth full-port TCP scan with service version detection.**
-
+nmap -p- -open -sS --min-rate 5000 -n -Pn -vvv <IP>
 cat ip_list.txt | xargs -P 3 -I{} nmap -Pn -p- -sS -sV --version-intensity 9 -T4 -n -oA "scan_{}" {}
 # **Run Nmap scans in parallel across multiple IPs.**
 
